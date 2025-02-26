@@ -6,6 +6,7 @@
 Authorization : Basic ~~~~~
 
 <h2>Bearer Token Authentication > 사용 예정</h2>
+
 - 헤더에 토큰을 포함하여 전송 Authorization 헤더에 포함하여 전송
 - JWT를 사용하여 인증
 - 간단한 방식, 상태를 유지하지 않음, 확장성이 높음
@@ -21,6 +22,7 @@ Authrization : Bearer ~~~~~
 
 -----
 <h2>JWT (JSON Web Token)</h2>
+
 - 클레임이라고 불리는 정보를 JSON 형태로 안전하게 전송하기 위한 토큰 기반의 표준
 - 인증과 정보 교환에 사용, 서명이 되어 있어 신뢰성 확보 가능
 - 장점 : 상태를 유지하지 않음(Stateless), 간단하고 자기 포함적, 확장성이 높다,
