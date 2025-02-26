@@ -1,12 +1,12 @@
 export default interface BoardListItem {
     boardNumber : number;
-    title : String;
-    content : String;
-    boardTitleImage : String | null;
+    title : string;
+    content : string;
+    boardTitleImage : string | null;
     favoriteCount : number;
     commentCount : number;
     viewCount : number;
-    writeDatetime : String;
-    writerNickname : String;
-    writerProfileImage : String | null;
+    writeDatetime : string;
+    writerNickname : string;
+    writerProfileImage : string | null;
 }
