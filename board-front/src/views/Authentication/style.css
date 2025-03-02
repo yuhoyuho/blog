@@ -99,7 +99,15 @@
     color: rgba(0, 0, 0, 1);
 
     font-size: 24px;
-    font-weight: 500;
+    font-weight: 570;
+    line-height: 140%;
+}
+
+.auth-card-page {
+    color: rgba(0, 0, 0, 0.8);
+
+    font-size: 24px;
+    font-weight: 570;
     line-height: 140%;
 }
 
