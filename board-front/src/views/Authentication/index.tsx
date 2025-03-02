@@ -373,7 +373,7 @@ export default function Authentication() {
         setEmailErrorMessage('이메일 주소 포멧이 맞지 않습니다.');
       }
 
-      const isCheckedPassword = password.trim().length > 8;
+      const isCheckedPassword = password.trim().length > 7;
       if(!isCheckedPassword) {
         setPasswordError(true);
         setPasswordErrorMessage('비밀번호는 8자 이상 입력해주세요.');
@@ -399,7 +399,7 @@ export default function Authentication() {
         setEmailErrorMessage('이메일 주소 포멧이 맞지 않습니다.');
       }
 
-      const isCheckedPassword = password.trim().length > 8;
+      const isCheckedPassword = password.trim().length > 7;
       if(!isCheckedPassword) {
         setPasswordError(true);
         setPasswordErrorMessage('비밀번호는 8자 이상 입력해주세요.');
