@@ -16,7 +16,7 @@ export default function Header() {
   const {pathname} = useLocation();
 
   //    state : cookie 상태   //
-  const [cookies, setCokkies] = useCookies();
+  const [cookies, setCookies] = useCookies();
 
   //    state : 로그인 상태   //
   const [isLogin, setLogin] = useState<boolean>(false);
@@ -134,6 +134,7 @@ export default function Header() {
     const onSignOutButtonClickHandler = () => {
       
       resetLoginUser();
+      setCookies('accessToken', '', {path : MAIN_PATH(), expires : new Date()});
       navigate(MAIN_PATH());
     }
 
@@ -173,7 +174,7 @@ export default function Header() {
     return <div className='disable-button'>{'업로드'}</div>
   }
 
-  //    effect : path가 변경될 때 마다 실행 될 함수   //
+  //    effect : path가 변경될 때 마다 실행될 함수   //
   useEffect(() => {
     
     const isAuthPage = pathname.startsWith(AUTH_PATH());
@@ -191,6 +192,11 @@ export default function Header() {
     const isUserPage = pathname.startsWith(USER_PATH(''));
     setUserPage(isUserPage);
   }, [pathname]);
+
+  //    effect : login user가 변경될 때 마다 실행될 함수    //
+  useEffect(() => {
+    setLogin(loginUser !== null);
+  }, [loginUser])
 
   //      render : Header layout 렌더링      //
   return (
