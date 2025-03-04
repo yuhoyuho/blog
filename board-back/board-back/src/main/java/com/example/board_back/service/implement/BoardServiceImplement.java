@@ -10,6 +10,7 @@ import com.example.board_back.entity.FavoriteEntity;
 import com.example.board_back.entity.ImageEntity;
 import com.example.board_back.repository.*;
 import com.example.board_back.repository.resultSet.GetBoardResultSet;
+import com.example.board_back.repository.resultSet.GetCommentListResultSet;
 import com.example.board_back.repository.resultSet.GetFavoriteListResultSet;
 import com.example.board_back.service.BoardService;
 import lombok.RequiredArgsConstructor;
@@ -71,6 +72,25 @@ public class BoardServiceImplement implements BoardService {
             return ResponseDto.databaseError();
         }
         return GetFavoriteListResponseDto.success(resultSets);
+    }
+
+    @Override
+    public ResponseEntity<? super GetCommentListResponseDto> getCommentList(Integer boardNumber) {
+
+        List<GetCommentListResultSet> resultSets = new ArrayList<>();
+
+        try {
+
+            boolean existedBoard = boardRepository.existsByBoardNumber(boardNumber);
+            if(!existedBoard) return GetCommentListResponseDto.noExistBoard();
+
+            resultSets = commentRepository.getCommentList(boardNumber);
+
+        }catch(Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+        return GetCommentListResponseDto.success(resultSets);
     }
 
     @Override
