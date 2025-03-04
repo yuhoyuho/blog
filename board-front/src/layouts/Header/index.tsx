@@ -173,7 +173,7 @@ export default function Header() {
       if(code === 'AF' || code === 'NU') navigate(AUTH_PATH());
       if(code === 'VF') alert('제목과 내용은 필수입니다.');
       if(code === 'DBE') alert('데이터베이스 오류입니다.');
-      if(code === 'SU') return;
+      if(code !== 'SU') return;
 
       resetBoard();
       if(!loginUser) return;
