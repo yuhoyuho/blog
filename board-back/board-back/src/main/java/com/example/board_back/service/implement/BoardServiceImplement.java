@@ -5,10 +5,7 @@ import com.example.board_back.dto.request.board.PostBoardRequestDto;
 import com.example.board_back.dto.request.board.PostCommentRequestDto;
 import com.example.board_back.dto.response.ResponseDto;
 import com.example.board_back.dto.response.board.*;
-import com.example.board_back.entity.BoardEntity;
-import com.example.board_back.entity.CommentEntity;
-import com.example.board_back.entity.FavoriteEntity;
-import com.example.board_back.entity.ImageEntity;
+import com.example.board_back.entity.*;
 import com.example.board_back.repository.*;
 import com.example.board_back.repository.resultSet.GetBoardResultSet;
 import com.example.board_back.repository.resultSet.GetCommentListResultSet;
@@ -16,7 +13,6 @@ import com.example.board_back.repository.resultSet.GetFavoriteListResultSet;
 import com.example.board_back.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -31,6 +27,7 @@ public class BoardServiceImplement implements BoardService {
     private final ImageRepository imageRepository;
     private final FavoriteRepository favoriteRepository;
     private final CommentRepository commentRepository;
+    private final BoardListViewRepository boardListViewRepository;
 
     @Override
     public ResponseEntity<? super GetBoardResponseDto> getBoard(Integer boardNumber) {
@@ -89,6 +86,22 @@ public class BoardServiceImplement implements BoardService {
             return ResponseDto.databaseError();
         }
         return GetCommentListResponseDto.success(resultSets);
+    }
+
+    @Override
+    public ResponseEntity<? super GetLatestBoardListResponseDto> getLatestBoardList() {
+
+        List<BoardListViewEntity> boardListViewEntities = new ArrayList<>();
+
+        try {
+
+            boardListViewEntities = boardListViewRepository.findByOrderByWriteDatetimeDesc();
+
+        }catch(Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+        return GetLatestBoardListResponseDto.success(boardListViewEntities);
     }
 
     @Override
