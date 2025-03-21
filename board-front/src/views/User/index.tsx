@@ -5,8 +5,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { BoardListItem } from 'types/interface';
 import { latestBoardListMock } from 'mocks';
 import BoardItem from 'components/BoardItem';
-import { BOARD_PATH, BOARD_WRITE_PATH, USER_PATH } from 'constant';
+import { BOARD_PATH, BOARD_WRITE_PATH, MAIN_PATH, USER_PATH } from 'constant';
 import { useLoginUserStore } from 'stores';
+import { fileUploadRequest, getUserRequest, patchProfileImageRequest } from 'apis';
+import { GetUserResponseDto, PatchProfileImageResponseDto } from 'apis/response/user';
+import { ResponseDto } from 'apis/response';
+import { PatchProfileImageRequestDto } from 'apis/request/user';
+import { useCookies } from 'react-cookie';
 
 //      component : 유저 화면 컴포넌트        //
 export default function User() {
@@ -17,8 +22,11 @@ export default function User() {
   //    state : 로그인 유저 상태    //
   const {loginUser} = useLoginUserStore();
 
+  //    state : 쿠키 상태   //
+  const [cookies, setCookies] = useCookies();
+
   //    state : 마이페이지 여부 상태    //
-  const [isMyPage, setMyPage] = useState<boolean>(true);
+  const [isMyPage, setMyPage] = useState<boolean>(false);
 
   //    function : 네비게이트 함수    //
   const navigate = useNavigate();
@@ -41,6 +49,49 @@ export default function User() {
     //    state : 프로필 이미지 상태   //
     const [profileImage, setprofileImage] = useState<string | null>(null);
 
+    //    function : getUserResponse 처리 함수    //
+    const getUserResponse = (responseBody : GetUserResponseDto | ResponseDto | null) => {
+      if(!responseBody) return;
+      const {code} = responseBody;
+
+      if(code === 'NU') alert('존재하지 않는 유저입니다.');
+      if(code === 'DBE') alert('데이터베이스 오류입니다.');
+      if(code !== 'SU') {
+        navigate(MAIN_PATH());
+        return;
+      }
+
+      const {email, nickname, profileImage} = responseBody as GetUserResponseDto;
+      setNickname(nickname);
+      setprofileImage(profileImage);
+      
+      const isMyPage = email === loginUser?.email;
+      setMyPage(isMyPage);
+    }
+
+    //    function : fileUploadResponse 처리 함수   //
+    const fileUploadResponse = (profileImage : string | null) => {
+      if(!profileImage) return;
+      if(!cookies.accessToken) return;
+
+      const requestBody : PatchProfileImageRequestDto = {profileImage};
+      patchProfileImageRequest(requestBody, cookies.accessToken).then(patchProfileImageResponse);
+    }
+
+    //    function : patchProfileImageResponse 처리 함수    //
+    const patchProfileImageResponse = (responseBody : PatchProfileImageResponseDto | ResponseDto | null) => {
+      if(!responseBody) return;
+      const {code} = responseBody;
+
+      if(code === 'AF') alert('로그인 인증에 실패했습니다.');
+      if(code === 'NU') alert('존재하지 않는 유저입니다.');
+      if(code === 'DBE') alert('데이터베이스 오류입니다.');
+      if(code !== 'SU') return;
+
+      if(!userEmail) return;
+      getUserRequest(userEmail).then(getUserResponse);
+    }
+
     //    event handler : 프로필 박스 클릭 이벤트 처리    //
     const onProfileBoxClickHanlder = () => {
       if(!isMyPage) return;
@@ -61,6 +112,8 @@ export default function User() {
       const file = event.target.files[0];
       const data = new FormData();
       data.append('file', file);
+
+      fileUploadRequest(data).then(fileUploadResponse);
     }
 
     //    event handler : 닉네임 변경 이벤트 처리   //
@@ -72,8 +125,7 @@ export default function User() {
     //    effect : user email path variable 변경 시 실행될 함수    //
     useEffect(() => {
       if(!userEmail) return;
-      setNickname('YuhoYuho');
-      // setprofileImage('https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAxODAxMjlfMjIz%2FMDAxNTE3MjIxNDA3MDMy.elAEuXxvjGCwjzDpFNaXtPm-__prDl-ejMY574bbOq4g.7BWogSkaXWbMujgT62SKBdBAeTf99z3FFmCqnUOQgnYg.JPEG.d_hye97%2F654684514.jpg&type=ofullfill340_600_png')
+      getUserRequest(userEmail).then(getUserResponse);
 
     }, [userEmail])
 
