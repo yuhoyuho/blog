@@ -7,10 +7,10 @@ import { latestBoardListMock } from 'mocks';
 import BoardItem from 'components/BoardItem';
 import { BOARD_PATH, BOARD_WRITE_PATH, MAIN_PATH, USER_PATH } from 'constant';
 import { useLoginUserStore } from 'stores';
-import { fileUploadRequest, getUserRequest, patchProfileImageRequest } from 'apis';
-import { GetUserResponseDto, PatchProfileImageResponseDto } from 'apis/response/user';
+import { fileUploadRequest, getUserRequest, patchNicknameRequest, patchProfileImageRequest } from 'apis';
+import { GetUserResponseDto, PatchNicknameResponseDto, PatchProfileImageResponseDto } from 'apis/response/user';
 import { ResponseDto } from 'apis/response';
-import { PatchProfileImageRequestDto } from 'apis/request/user';
+import { PatchNicknameRequestDto, PatchProfileImageRequestDto } from 'apis/request/user';
 import { useCookies } from 'react-cookie';
 
 //      component : 유저 화면 컴포넌트        //
@@ -92,6 +92,23 @@ export default function User() {
       getUserRequest(userEmail).then(getUserResponse);
     }
 
+    //    function : patchNicknameResponse 처리 함수    //
+    const patchNicknameResponse = (responseBody : PatchNicknameResponseDto | ResponseDto | null) => {
+      if(!responseBody) return;
+      const {code} = responseBody;
+
+      if(code === 'VF') alert('닉네임은 필수입니다.');
+      if(code === 'AF') alert('로그인 인증에 실패했습니다.');
+      if(code === 'DN') alert('중복되는 닉네임입니다.');
+      if(code === 'NU') alert('존재하지 않는 유저입니다.');
+      if(code === 'DBE') alert('데이터베이스 오류입니다.');
+      if(code !== 'SU') return;
+
+      if(!userEmail) return;
+      getUserRequest(userEmail).then(getUserResponse);
+      setNicknameChange(false);
+    }
+
     //    event handler : 프로필 박스 클릭 이벤트 처리    //
     const onProfileBoxClickHanlder = () => {
       if(!isMyPage) return;
@@ -101,8 +118,17 @@ export default function User() {
 
     //    event handler : 닉네임 수정 버튼 클릭 이벤트 처리 함수    //
     const onNickNameEditButtonClickHandler = () => {
-      setChangeNickname(nickname);
-      setNicknameChange(!isNicknameChange);
+      if(!isNicknameChange) {
+        setChangeNickname(nickname);
+        setNicknameChange(!isNicknameChange);
+        return;
+      }
+
+      if(!cookies.accessToken) return;
+      const requestBody : PatchNicknameRequestDto = {
+        nickname : changeNickname,
+      }
+      patchNicknameRequest(requestBody, cookies.accessToken).then(patchNicknameResponse);
     }
 
     //    event handler : 프로필 이미지 변경 이벤트 처리    //
