@@ -16,7 +16,7 @@ import { useCookies } from 'react-cookie';
 //      component : 유저 화면 컴포넌트        //
 export default function User() {
 
-  //    state : user email path variable 여부 상태    //
+  //    state : userEmail path variable 여부 상태    //
   const {userEmail} = useParams();
 
   //    state : 로그인 유저 상태    //
